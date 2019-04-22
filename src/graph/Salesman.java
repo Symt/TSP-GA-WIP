@@ -2,6 +2,7 @@ package graph;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Salesman {
 	public Road currentRoad;
@@ -12,6 +13,8 @@ public class Salesman {
 	public List<City> needToVisit = new ArrayList<>(Top.positiveCities);
 	public double score;
 	public List<Double> roundScore = new ArrayList<>();
+	private static ThreadLocalRandom random = ThreadLocalRandom.current();
+	boolean started = false;
 
 	public Salesman(Road currentRoad, double weight) {
 		this.currentRoad = currentRoad;
@@ -36,9 +39,11 @@ public class Salesman {
 			weight = 0;
 			score = 0;
 		} else {
-			if (path.size() == 1) {
-				currentRoad = path.get(0);
-				score = roundScore.get(0);
+			Road cR = path.remove(path.size()-1);
+			Double cS = roundScore.remove(roundScore.size()-1);
+			currentRoad = cR;
+			score = cS;
+			if (path.size() == 0) {
 				if (currentRoad.start.equals(SalesmanHandler.base)) {
 					pre = currentRoad.start;
 					post = currentRoad.end;
@@ -47,9 +52,7 @@ public class Salesman {
 					pre = currentRoad.end;
 				}
 			} else {
-				currentRoad = path.get(path.size() - 1);
-				Road previous = path.get(path.size() - 2);
-				score = roundScore.get(roundScore.size() - 1);
+				Road previous = path.get(path.size() - 1);
 				if (currentRoad.start.equals(previous.start) || currentRoad.start.equals(previous.end)) {
 					pre = currentRoad.start;
 					post = currentRoad.end;
@@ -62,25 +65,28 @@ public class Salesman {
 		}
 	}
 
-	public void subtractWeight(double successWeight) {
-		weight -= successWeight;
-		if (weight == 0) {
-			path.add(currentRoad);
-			if (needToVisit.contains(post)) {
-				if (needToVisit.size() != 1 && post.equals(SalesmanHandler.base)) {
-					score -= 5;
+	public void subtractWeight(double successWeight, int iteration) {
+		if (started || path.size() < iteration) {
+			weight -= successWeight;
+			if (weight == 0) {
+				path.add(currentRoad);
+				if (needToVisit.contains(post)) {
+					if (needToVisit.size() != 1 && post.equals(SalesmanHandler.base)) {
+						score -= 5;
+					} else {
+						needToVisit.remove(post);
+						score += 25;
+					}
 				} else {
-					needToVisit.remove(post);
-					score += 25;
+					score -= 5;
 				}
+				pre = post;
+				post = null;
+				roundScore.add(score);
 			} else {
-				score -= 5;
+				score += 0.01d / weight;
 			}
-			pre = post;
-			post = null;
-			roundScore.add(score);
-		} else {
-			score += 0.01d / weight;
+			started = true;
 		}
 	}
 
