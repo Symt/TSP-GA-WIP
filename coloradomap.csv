@@ -1,0 +1,137 @@
+Grand Junction,58,251,,
+Delta,108,291,,
+Montrose,127,325,,
+Saguache,314,375,,
+Gunnison,230,314,,
+Hotchkiss,143,278,,
+Rifle,139,191,,
+Cortez,54,469,,
+Durango,128,479,,
+Telluride,115,394,,
+Dove Creek,20,417,,
+Naturita,56,358,,
+Lake City,187,381,,
+Crested Butte,223,275,,
+Aspen,243,232,,
+Ridgeway,143,368,,
+Placerville,111,377,,
+Carbondale,198,208,,
+Meeker,124,125,,
+Rangely,30,119,,
+Dinosaur,9,100,,
+Craig,163,64,,
+Steamboat Springs,239,68,,
+Canon City,409,329,,
+Poncha Springs,320,320,,
+Glenwood Springs,190,190,,
+Leadville,296,227,,
+South Fork,269,426,,
+Monte Vista,314,439,,
+Alamosa,343,455,,
+Buena Vista,316,283,,
+Walden,300,37,,
+Kremmling,286,123,,
+Empire,363,131,,
+Estes Park,381,83,,
+Granby,338,120,,
+Denver,436,161,,
+Balltown,300,253,,
+Walsenburg,460,435,,
+Pueblo,477,354,,
+Colorado Springs,455,281,,
+Fairplay,331,229,,
+Dillon,323,178,,
+Copper Mountain,312,195,,
+Wolcott,253,168,,
+Vail,279,181,,
+South Park,333,268,,
+Middle of Nowhere,269,86,,
+Longmont,437,109,,
+Boulder,405,128,,
+Lyons,409,109,,
+Fort Collins,425,55,,
+Loveland,427,79,,
+,,,,
+CO 141,Grand Junction,Naturita,107,212
+US 50,Grand Junction,Delta,43,57
+US 50,Delta,Montrose,23,30
+US 50,Montrose,Gunnison,65,76
+I-70,Grand Junction,Rifle,67,69
+CO 139,Grand Junction,Rangely,88,270
+CO 92,Delta,Hotchkiss,20,40
+CO 141,Naturita,Placerville,37,75
+CO 62,Placerville,Ridgeway,23,45
+CO 145,Placerville,Telluride,16,33
+US 550,Montrose,Ridgeway,27,33
+US 550,Ridgeway,Durango,82,97
+CO 133,Hotchkiss,Carbondale,66,134
+CO 92,Hotchkiss,Gunnison,79,137
+CO 135,Gunnison,Crested Butte,27,69
+CO 114,Gunnison,Saguache,70,134
+CO 149,Gunnison,Lake City,55,103
+CO 149,Lake City,South Fork,70,143
+US 160,South Fork,Durango,103,117
+US 160,Durango,Cortez,46,55
+US 491,Cortez,Dove Creek,35,40
+CO 141,Dove Creek,Naturita,62,126
+CO 145,Cortez,Telluride,76,155
+I-70,Denver,Empire,46,47
+I-70,Empire,Dillon,26,30
+I-70,Dillon,Copper Mountain,10,10
+I-70,Copper Mountain,Vail,25,25
+I-70,Vail,Wolcott,20,21
+I-70,Wolcott,Glenwood Springs,41,43
+I-70,Glenwood Springs,Rifle,28,29
+US 285,Saguache,Poncha Springs,40,44
+US 285,Saguache,Monte Vista,35,39
+US 285,Monte Vista,Alamosa,17,23
+US 160,Monte Vista,South Fork,30,33
+US 160,Alamosa,Walsenburg,73,86
+I-25,Walsenburg,Pueblo,49,44
+I-25,Pueblo,Colorado Springs,44,43
+I-25,Colorado Springs,Denver,73,75
+I-25,Denver,Longmont,28,28
+I-25,Longmont,Loveland,26,23
+I-25,Loveland,Fort Collins,16,13
+CO 14,Fort Collins,Walden,103,201
+CO 125,Walden,Granby,57,112
+CO 14,Walden,Middle of Nowhere,34,69
+US 40,Middle of Nowhere,Steamboat Springs,21,22
+US 40,Steamboat Springs,Craig,46,54
+US 40,Craig,Dinosaur,86,97
+CO 64,Dinosaur,Rangely,20,38
+CO 64,Rangely,Meeker,53,107
+CO 13,Meeker,Craig,50,67
+CO 13,Meeker,Rifle,40,63
+CO 131,Steamboat Springs,Wolcott,69,140
+US 40,Steamboat Springs,Kremmling,28,30
+CO 9,Kremmling,Dillon,38,75
+CO 9,Dillon,Fairplay,35,69
+US 285,Fairplay,South Park,21,24
+US 285,South Park,Buena Vista,14,16
+US 285,Buena Vista,Poncha Springs,20,21
+US 24,South Park,Colorado Springs,76,91
+CO 82,Carbondale,Aspen,27,43
+CO 82,Aspen,Balltown,41,80
+US 24,Balltown,Leadville,15,16
+US 24,Leadville,Vail,32,37
+CO 91,Leadville,Copper Mountain,24,38
+US 50,Gunnison,Poncha Springs,59,66
+US 50,Poncha Springs,Canon City,61,70
+US 50,Canon City,Pueblo,32,40
+CO 115,Canon City,Colorado Springs,42,75
+US 24,Balltown,Buena Vista,22,24
+CO 82,Glenwood Springs,Carbondale,12,20
+CO 17,Poncha Springs,Alamosa,79,137
+US 40,Middle of Nowhere,Granby,54,59
+US 40,Granby,Empire,46,51
+US 36,Granby,Estes Park,80,93
+US 36,Lyons,Estes Park,22,26
+US 34,Estes Park,Loveland,31,39
+CO 66,Lyons,Longmont,16,33
+US 36,Lyons,Boulder,16,24
+US 36,Boulder,Denver,23,25
+CO 119,Boulder,Empire,47,90
+US 285,Denver,Fairplay,90,101
+Pearl Pass Jeep Road,Crested Butte,Aspen,37,240
+US 40,Kremmling,Granby,26,28
