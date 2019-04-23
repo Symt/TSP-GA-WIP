@@ -103,11 +103,7 @@ public class Mapper extends javax.swing.JFrame {
   }
 
   public static void main(String args[]) {
-    java.awt.EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        new Mapper().setVisible(true);
-      }
-    });
+    java.awt.EventQueue.invokeLater(() ->new Mapper().setVisible(true));
   }
 
 

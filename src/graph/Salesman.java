@@ -2,30 +2,28 @@ package graph;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Salesman {
 
-  public Road currentRoad;
-  public List<Road> path = new ArrayList<>();
-  public City pre;
-  public City post;
-  public double weight;
-  public List<City> needToVisit = new ArrayList<>(Top.positiveCities);
-  public double score;
-  public List<Double> roundScore = new ArrayList<>();
-  private static ThreadLocalRandom random = ThreadLocalRandom.current();
+  Road currentRoad;
+  List<Road> path = new ArrayList<>();
+  City pre;
+  City post;
+  double weight;
+  List<City> needToVisit = new ArrayList<>(Top.positiveCities);
+  private double score;
+  List<Double> roundScore = new ArrayList<>();
   boolean started = false;
   double dist = 0;
 
-  public Salesman(Road currentRoad, double weight) {
+  Salesman(Road currentRoad, double weight) {
     this.currentRoad = currentRoad;
     pre = currentRoad.start;
     post = currentRoad.end;
     this.weight = weight;
   }
 
-  public Salesman(Salesman parent1, Salesman parent2) {
+  Salesman(Salesman parent1, Salesman parent2) {
     int smallSize = Math.min(parent1.path.size(), parent2.path.size());
     for (int i = 0; i < smallSize; i++) {
       if (parent1.path.get(i).equals(parent2.path.get(i))) {
@@ -67,7 +65,7 @@ public class Salesman {
     }
   }
 
-  public void subtractWeight(double successWeight, int iteration) {
+  void subtractWeight(double successWeight, int iteration) {
     if (started || path.size() < iteration) {
       weight -= successWeight;
       if (weight == 0) {
@@ -93,7 +91,7 @@ public class Salesman {
     dist += successWeight;
   }
 
-  public void fixSalesman() {
+  void fixSalesman() {
     List<City> visitedCities = new ArrayList<>();
     if (path.size() != 0 && roundScore.size() != 0) {
       score = roundScore.get(path.size() - 1);
@@ -118,19 +116,19 @@ public class Salesman {
     }
   }
 
-  public void boldPath() {
+  void boldPath() {
     for (Road r : path) {
       r.bold = true;
     }
   }
 
-  public double getWeight() {
+  double getWeight() {
     return weight;
   }
 
   @Override
   public String toString() {
     return String
-        .format("{score=%f, left=%d, pathsize=%d}", score, needToVisit.size(), path.size());
+        .format("{score=%f, left=%d, path_size=%d}", score, needToVisit.size(), path.size());
   }
 }

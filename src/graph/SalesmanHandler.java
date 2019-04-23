@@ -1,7 +1,6 @@
 package graph;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -11,80 +10,61 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class SalesmanHandler extends ArrayList<Salesman> {
+class SalesmanHandler extends ArrayList<Salesman> {
 
+  static City base;
   private static final long serialVersionUID = 1L;
-  static final boolean animate = false;
-  static final boolean delay = true;
-  int size;
-  public static double mutationRate = 0;
-  public static boolean newGen = false;
+  private static final boolean animate = false;
+  private static final boolean delay = true;
+  private int size;
+  private static double mutationRate = 0;
   private ThreadLocalRandom random = ThreadLocalRandom.current();
-  public HashMap<City, LinkedHashMap<Road, Double>> nodeWeights = new HashMap<>();
-
+  private HashMap<City, LinkedHashMap<Road, Double>> nodeWeights = new HashMap<>();
   private Comparator<Salesman> comparatorForWeight = Comparator.comparing(Salesman::getWeight);
-
   private Comparator<Salesman> comparatorForLeft = (Salesman a, Salesman b) -> {
-    int asize = a.needToVisit.size();
-    int bsize = b.needToVisit.size();
-    if (bsize == asize) {
-      if (a.dist > b.dist) {
-        return 1;
-      } else if (a.dist < b.dist) {
-        return -1;
-      } else {
-        return 0;
-      }
+    int aSize = a.needToVisit.size();
+    int bSize = b.needToVisit.size();
+    if (bSize == aSize) {
+      return Double.compare(a.dist, b.dist);
     } else {
-      return (asize > bsize) ? 1 : -1;
+      return (aSize > bSize) ? 1 : -1;
     }
   };
 
-  public static City base;
-
-  public SalesmanHandler(int size, City startingNode) {
+  SalesmanHandler(int size, City startingNode) {
     base = startingNode;
     this.size = size;
     levelProbabilitiesALL();
     calculateNext(startingNode, null);
   }
 
-  public void generations() {
+  void generations() {
     long time = 0;
     long startTime = System.nanoTime();
     int generation = 0;
     int endGenSize = City.cities.size() / 2;
-    for (; ; ) {
+    do {
       mutationRate += 0.00025;
-      newGen = true;
       for (int i = 0; ; i++) {
         if (i == endGenSize || moveAndFitness(i)) {
           break;
         }
       }
       generation++;
-      newGen = false;
-      Collections.sort(this, comparatorForLeft);
+      this.sort(comparatorForLeft);
       crossoverAndMutate();
       time += (System.nanoTime() - startTime);
       if (animate) {
         if (delay) {
-          try {
-            Thread.sleep(100);
-          } catch (InterruptedException e) {
-          }
+          delay();
         }
         this.get(0).boldPath();
         Top.self.repaint();
       }
       startTime = System.nanoTime();
-
-      if (generation == 1000) {
-        break;
-      }
-    }
+    } while (generation != 1000);
     System.out.println(generation + " generations: " + time / 1000000d + "ms");
-    Collections.sort(this, comparatorForLeft);
+    this.sort(comparatorForLeft);
     this.get(0).boldPath();
     Top.self.repaint();
     mutationRate = 0;
@@ -95,14 +75,14 @@ public class SalesmanHandler extends ArrayList<Salesman> {
     int resetSpot;
     Salesman s;
     for (int i = 0; i < this.size() / 4; i += 4) {
-      this.set(this.size() / 4 + i + 0, new Salesman(this.get(i), this.get(i + 1)));
+      this.set(this.size() / 4 + i, new Salesman(this.get(i), this.get(i + 1)));
       this.set(this.size() / 4 + i + 1, new Salesman(this.get(i + 1), this.get(i + 2)));
       this.set(this.size() / 4 + i + 2, new Salesman(this.get(i + 2), this.get(i + 3)));
       this.set(this.size() / 4 + i + 3, new Salesman(this.get(i + 3), this.get(i + 4)));
     }
 
-    int tempsize = this.size();
-    for (int i = 0; i < tempsize; i++) {
+    int tempSize = this.size();
+    for (int i = 0; i < tempSize; i++) {
       s = this.get(i);
       if (s.pre.equals(base) && s.post == null) {
         calculateNext(s.pre, s.currentRoad);
@@ -112,39 +92,22 @@ public class SalesmanHandler extends ArrayList<Salesman> {
     for (int i = 0; i < this.size(); i++) {
       s = this.get(i);
       if (s.path.size() != 0 && random.nextDouble() < mutationRate) {
-        boolean good = isContinuous(s.path, base);
         resetSpot = random.nextInt(0, s.path.size());
         s.currentRoad = s.path.get(resetSpot);
-        System.out.println("Before: " + s.path);
         s.path.subList(resetSpot, s.path.size()).clear();
-        System.out.println("After: " + s.path);
         s.roundScore.subList(resetSpot, s.roundScore.size()).clear();
         s.fixSalesman();
-        System.out.println(good == isContinuous(s.path, base));
-        delay(5000);
       }
     }
   }
 
-  public void delay(int t) {
+  private void delay() {
     try {
-      Thread.sleep(t);
+      Thread.sleep(100);
     } catch (InterruptedException e) {
+      e.printStackTrace();
+      System.exit(0);
     }
-  }
-
-  public boolean isContinuous(List<Road> s, City start) {
-    City next = start;
-    for (Road i : s) {
-      if (i.start.equals(next)) {
-        next = i.end;
-      } else if (i.end.equals(next)) {
-        next = i.start;
-      } else {
-        return false;
-      }
-    }
-    return true;
   }
 
   private Salesman weighted(LinkedHashMap<Road, Double> weights) {
@@ -165,13 +128,11 @@ public class SalesmanHandler extends ArrayList<Salesman> {
     double weight = 0;
     ArrayList<Salesman> updated = new ArrayList<>();
     ArrayList<Salesman> iteration = new ArrayList<>(this);
-    LinkedHashMap<Road, Double> weights = new LinkedHashMap<Road, Double>(nodeWeights.get(node));
+    LinkedHashMap<Road, Double> weights = new LinkedHashMap<>(nodeWeights.get(node));
 
     if (roadToIgnore != null && weights.containsKey(roadToIgnore)) {
       Double needToAdd = weights.remove(roadToIgnore) / weights.size();
-      weights.forEach((k, v) -> {
-        weights.put(k, v + needToAdd);
-      });
+      weights.forEach((k, v) -> weights.put(k, v + needToAdd));
     }
 
     if (this.size() == 0) {
@@ -212,8 +173,8 @@ public class SalesmanHandler extends ArrayList<Salesman> {
     Set<Road> roads = new LinkedHashSet<>(node.roads);
     LinkedHashMap<Road, Double> weights = new LinkedHashMap<>();
     double totalWeight = 0d;
-    double extraWeight = 0d;
-    double tempWeight = 0d;
+    double extraWeight;
+    double tempWeight;
     for (Road r : roads) {
       weights.put(r, r.speed);
       totalWeight += r.speed;
@@ -237,9 +198,9 @@ public class SalesmanHandler extends ArrayList<Salesman> {
       weights.replace(r, ((tempWeight - w) + extraWeight));
       totalWeight += ((tempWeight - w) + extraWeight);
     }
-    List<Map.Entry<Road, Double>> entries = new ArrayList<Map.Entry<Road, Double>>(
+    List<Map.Entry<Road, Double>> entries = new ArrayList<>(
         weights.entrySet());
-    Collections.sort(entries, Comparator.comparing(Map.Entry::getValue));
+    entries.sort(Comparator.comparing(Map.Entry::getValue));
     weights = new LinkedHashMap<>();
     for (Map.Entry<Road, Double> entry : entries) {
       weights.put(entry.getKey(), entry.getValue() / totalWeight);
@@ -250,7 +211,7 @@ public class SalesmanHandler extends ArrayList<Salesman> {
   }
 
   private boolean moveAndFitness(int iteration) {
-    Collections.sort(this, comparatorForWeight);
+    this.sort(comparatorForWeight);
     double successWeight = this.get(0).weight;
     Map.Entry<City, Road> cityRoad = null;
     this.forEach((Salesman s) -> s.started = false);
