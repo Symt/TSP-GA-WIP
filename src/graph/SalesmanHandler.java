@@ -12,23 +12,31 @@ import java.util.concurrent.ThreadLocalRandom;
 
 class SalesmanHandler extends ArrayList<Salesman> {
 
-  static City base;
   private static final long serialVersionUID = 1L;
   private static final boolean animate = false;
   private static final boolean delay = true;
-  private int size;
+  static City base;
   private static double mutationRate = 0;
+  private int size;
   private ThreadLocalRandom random = ThreadLocalRandom.current();
   private HashMap<City, LinkedHashMap<Road, Double>> nodeWeights = new HashMap<>();
   private Comparator<Salesman> comparatorForWeight = Comparator.comparing(Salesman::getWeight);
   private Comparator<Salesman> comparatorForLeft = (Salesman a, Salesman b) -> {
     int aSize = a.needToVisit.size();
     int bSize = b.needToVisit.size();
+    int result;
     if (bSize == aSize) {
-      return Double.compare(a.dist, b.dist);
+      result = Double.compare(a.score, b.score);
+      if (result == 0) {
+        result = Double.compare(a.dist, b.dist);
+        if (result == 0) {
+          result = Double.compare(a.path.size(), b.path.size());
+        }
+      }
     } else {
-      return (aSize > bSize) ? 1 : -1;
+      result = Integer.compare(aSize, bSize);
     }
+    return result;
   };
 
   SalesmanHandler(int size, City startingNode) {
@@ -38,13 +46,13 @@ class SalesmanHandler extends ArrayList<Salesman> {
     calculateNext(startingNode, null);
   }
 
-  void generations() {
+  double generations() {
     long time = 0;
     long startTime = System.nanoTime();
     int generation = 0;
-    int endGenSize = City.cities.size() / 2;
+    int endGenSize = City.cityNum; // TODO: Fix up this number to be optimal for completion
     do {
-      mutationRate += 0.00025;
+      mutationRate += 0.000125;
       for (int i = 0; ; i++) {
         if (i == endGenSize || moveAndFitness(i)) {
           break;
@@ -65,15 +73,17 @@ class SalesmanHandler extends ArrayList<Salesman> {
     } while (generation != 1000);
     System.out.println(generation + " generations: " + time / 1000000d + "ms");
     this.sort(comparatorForLeft);
+    System.out.println(this);
     this.get(0).boldPath();
-    Top.self.repaint();
     mutationRate = 0;
+    return this.get(0).dist;
   }
 
   private void crossoverAndMutate() {
 
     int resetSpot;
     Salesman s;
+
     for (int i = 0; i < this.size() / 4; i += 4) {
       this.set(this.size() / 4 + i, new Salesman(this.get(i), this.get(i + 1)));
       this.set(this.size() / 4 + i + 1, new Salesman(this.get(i + 1), this.get(i + 2)));
@@ -92,11 +102,9 @@ class SalesmanHandler extends ArrayList<Salesman> {
     for (int i = 0; i < this.size(); i++) {
       s = this.get(i);
       if (s.path.size() != 0 && random.nextDouble() < mutationRate) {
-        resetSpot = random.nextInt(0, s.path.size());
+        resetSpot = random.nextInt(s.path.size() / 2, s.path.size());
         s.currentRoad = s.path.get(resetSpot);
         s.path.subList(resetSpot, s.path.size()).clear();
-        s.roundScore.subList(resetSpot, s.roundScore.size()).clear();
-        s.fixSalesman();
       }
     }
   }
@@ -214,7 +222,7 @@ class SalesmanHandler extends ArrayList<Salesman> {
     this.sort(comparatorForWeight);
     double successWeight = this.get(0).weight;
     Map.Entry<City, Road> cityRoad = null;
-    this.forEach((Salesman s) -> s.started = false);
+    this.forEach((Salesman s) -> s.resetForGeneration(iteration));
     for (Salesman i : this) {
       i.subtractWeight(successWeight, iteration);
       if (i.needToVisit.size() == 0) {

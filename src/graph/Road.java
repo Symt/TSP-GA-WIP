@@ -17,6 +17,10 @@ public class Road {
     this.speed = (double) length / ((double) time);
   }
 
+  public City convert(City c) {
+    return (c.equals(start)) ? end : start;
+  }
+
   @Override
   public String toString() {
     return name + " (" + start.name + " " + end.name + ")";

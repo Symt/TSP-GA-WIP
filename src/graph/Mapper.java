@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class Mapper extends javax.swing.JFrame {
 
+  static String dist = "";
+
   public Mapper() {
     initComponents();
     String err = MapReadder.readMapFile(new File("coloradomap.csv"));
@@ -72,7 +74,7 @@ public class Mapper extends javax.swing.JFrame {
 
     mapPanel.setPreferredSize(new java.awt.Dimension(1000, 650));
     status.setPreferredSize(new java.awt.Dimension(100, 100));
-    status.setText("Distance = ");
+    status.setText("Distance = " + dist);
 
     startButton.setPreferredSize(new java.awt.Dimension(100, 100));
     startButton.setText("Start Problem");

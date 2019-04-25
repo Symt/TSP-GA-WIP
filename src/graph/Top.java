@@ -26,7 +26,8 @@ public class Top {
 
   public static void getShortest() {
     SalesmanHandler handler = new SalesmanHandler(100, positiveCities.get(0));
-    handler.generations();
+    Mapper.dist = Double.toString(handler.generations());
+    Top.self.repaint();
   }
 
   public static void main(String[] args) {
