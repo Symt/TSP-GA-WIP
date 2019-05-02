@@ -28,7 +28,7 @@ public class Road {
 
   @Override
   public boolean equals(Object o) {
-    return ((Road) o).toString().equals(this.toString());
+    return o.toString().equals(this.toString());
   }
 
   @Override

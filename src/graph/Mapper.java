@@ -2,6 +2,7 @@ package graph;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.File;
@@ -12,9 +13,10 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class Mapper extends javax.swing.JFrame {
 
-  static String dist = "";
+  private static boolean ran = false;
+  private javax.swing.JLabel status;
 
-  public Mapper() {
+  private Mapper() {
     initComponents();
     String err = MapReadder.readMapFile(new File("coloradomap.csv"));
     if (err != null) {
@@ -23,13 +25,67 @@ public class Mapper extends javax.swing.JFrame {
     }
   }
 
+  public static void main(String[] args) {
+    java.awt.EventQueue.invokeLater(() -> new Mapper().setVisible(true));
+  }
+
+  private void initComponents() {
+    javax.swing.JPanel mapPanel;
+    javax.swing.JButton startButton;
+    mapPanel = new MyPanel();
+    status = new javax.swing.JLabel();
+    startButton = new javax.swing.JButton();
+
+    setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+    mapPanel.setPreferredSize(new java.awt.Dimension(1000, 650));
+    status.setPreferredSize(new java.awt.Dimension(100, 100));
+    status.setText("Distance = 0");
+
+    startButton.setPreferredSize(new java.awt.Dimension(100, 100));
+    startButton.setText("Start Problem");
+    startButton.addActionListener((java.awt.event.ActionEvent evt) -> startButtonActionPerformed());
+
+    GroupLayout layout = new GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(
+        layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+            .addComponent(mapPanel)
+            .addComponent(startButton)
+            .addGap(50)
+            .addComponent(status)
+            .addGap(100)
+    );
+    layout.setVerticalGroup(
+        layout.createSequentialGroup()
+            .addComponent(mapPanel)
+            .addComponent(startButton)
+            .addComponent(status)
+    );
+    pack();
+  }
+
+  private void startButtonActionPerformed() {
+    if (!ran) {
+      ran = true;
+      Thread t = new Thread(() -> {
+        Top.self = this;
+        Top.planRoute();
+        Top.getShortest();
+        Mapper.ran = false;
+      });
+      t.start();
+    }
+
+  }
+
   public class MyPanel extends JPanel {
 
     @Override
     public void paint(Graphics g) {
       super.paint(g);
       Graphics2D g2d = (Graphics2D) g;
-      g.setFont(new java.awt.Font("Tahoma", 1, 11));
+      g.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11));
       for (City c : City.cities) {
         for (Road r : c.roads) {
           if (r.bold) {
@@ -60,73 +116,7 @@ public class Mapper extends javax.swing.JFrame {
     }
   }
 
-  public void refresh() {
-    this.invalidate();
-  }
-
-  private void initComponents() {
-
-    mapPanel = new MyPanel();
-    status = new javax.swing.JLabel();
-    startButton = new javax.swing.JButton();
-
-    setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-    mapPanel.setPreferredSize(new java.awt.Dimension(1000, 650));
-    status.setPreferredSize(new java.awt.Dimension(100, 100));
+  void updateDist(double dist) {
     status.setText("Distance = " + dist);
-
-    startButton.setPreferredSize(new java.awt.Dimension(100, 100));
-    startButton.setText("Start Problem");
-
-    startButton.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        startButtonActionPerformed(evt);
-      }
-    });
-
-    GroupLayout layout = new GroupLayout(getContentPane());
-    getContentPane().setLayout(layout);
-    layout.setHorizontalGroup(
-        layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-            .addComponent(mapPanel)
-            .addComponent(startButton)
-            .addGap(50)
-            .addComponent(status)
-            .addGap(100)
-    );
-    layout.setVerticalGroup(
-        layout.createSequentialGroup()
-            .addComponent(mapPanel)
-            .addComponent(startButton)
-            .addComponent(status)
-    );
-    pack();
   }
-
-  public static void main(String args[]) {
-    java.awt.EventQueue.invokeLater(() ->new Mapper().setVisible(true));
-  }
-
-
-  private void startButtonActionPerformed(
-      java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-    if (!ran) {
-      ran = true;
-      Thread t = new Thread(() -> {
-        Top.self = this;
-        Top.planRoute();
-        Top.getShortest();
-        Mapper.ran = false;
-      });
-      t.start();
-
-    }
-
-  }//GEN-LAST:event_startButtonActionPerformed
-
-  private static boolean ran = false;
-  private javax.swing.JPanel mapPanel;
-  private javax.swing.JButton startButton;
-  private javax.swing.JLabel status;
 }

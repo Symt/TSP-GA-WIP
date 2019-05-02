@@ -5,21 +5,37 @@ import java.util.List;
 
 public class Salesman {
 
-  double dist = 0; // TODO: Fix distance, it isn't working properly.
+  double dist = 0;
   double weight;
+  double score;
   City pre;
   City post;
   List<City> needToVisit = new ArrayList<>(Top.positiveCities);
-  List<Road> path = new ArrayList<>(); // TODO: Keep investigating the path. It is better now, but still breaks sometimes
+  List<Road> path = new ArrayList<>();
   Road currentRoad;
-  double score;
-  private int startSize = 0; // TODO: Test to make sure this works as it should. (Write JUnit tests)
+  int iteration = 0;
+  int startSize = 0;
+  static int largestPathSize = 0;
+
 
   Salesman(Road currentRoad, double weight) {
     this.currentRoad = currentRoad;
     pre = currentRoad.start;
     post = currentRoad.end;
     this.weight = weight;
+  }
+
+  Salesman(Salesman s) {
+    dist = s.dist;
+    weight = s.weight;
+    score = s.score;
+    pre = s.pre;
+    post = s.post;
+    needToVisit = new ArrayList<>(s.needToVisit);
+    path = new ArrayList<>(s.path);
+    currentRoad = s.currentRoad;
+    iteration = s.iteration;
+    startSize = s.startSize;
   }
 
   Salesman(Salesman parent1, Salesman parent2) {
@@ -44,8 +60,14 @@ public class Salesman {
     }
   }
 
-  void resetForGeneration(int iteration) {
-    if (path.size() > iteration) {
+  void resetForGeneration() {
+    needToVisit = new ArrayList<>(Top.positiveCities);
+    if (path.size() == 0 && currentRoad != null) {
+      pre = SalesmanHandler.base;
+      post = currentRoad.convert(SalesmanHandler.base);
+      weight = currentRoad.speed;
+      startSize = 0;
+    } else {
       currentRoad = path.get(0);
       dist = 0;
       score = 0;
@@ -53,19 +75,18 @@ public class Salesman {
       pre = SalesmanHandler.base;
       post = (path.get(0).start.equals(SalesmanHandler.base)) ? path.get(0).end : path.get(0).start;
       startSize = path.size();
-      needToVisit = new ArrayList<>(Top.positiveCities);
-    } else if (path.size() == 0 && currentRoad != null) {
-      pre = SalesmanHandler.base;
-      post = currentRoad.convert(SalesmanHandler.base);
     }
   }
 
-  void subtractWeight(double successWeight, int iteration) {
+  void subtractWeight(double successWeight) {
     weight -= successWeight;
     dist += successWeight;
     if (weight == 0) {
       if (iteration >= startSize) {
         path.add(currentRoad);
+        if (path.size() > largestPathSize) {
+          largestPathSize = path.size();
+        }
       }
       if (needToVisit.contains(post)) {
         if (needToVisit.size() != 1 && post.equals(SalesmanHandler.base)) {
@@ -80,11 +101,12 @@ public class Salesman {
       pre = post;
       if (iteration < startSize) {
         post = (path.get(iteration).convert(pre));
-      } else if (iteration == startSize) {
-        post = currentRoad.convert(pre);
+        currentRoad = path.get(iteration);
+        weight = currentRoad.speed;
       } else {
         post = null;
       }
+      iteration++;
     } else {
       score += 0.01d / weight;
     }
@@ -98,6 +120,21 @@ public class Salesman {
 
   double getWeight() {
     return weight;
+  }
+
+  double totalSpeed() {
+    double total = 0;
+    for (Road r : path) {
+      total += r.speed;
+    }
+    return total;
+  }
+  double totalDist() {
+    double total = 0;
+    for (Road r : path) {
+      total += r.length;
+    }
+    return total;
   }
 
   @Override
